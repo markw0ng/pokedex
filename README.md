@@ -1,0 +1,1 @@
+Just a pokemon based project to use the <a href="https://pokeapi.co/">PokéAPI</a> to learn Flask and python requests and templating
