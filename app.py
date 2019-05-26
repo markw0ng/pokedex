@@ -63,22 +63,34 @@ def search():
     else:
         return render_template('search.html')
 
-# search pokemon
+# search pokemon types
 @app.route("/types/<type>")
 def pokemon_types(type):
-    filename = 'static/cache/types/%s.json' % type.lower()
-    exists = os.path.isfile(filename)
+    types_path = 'static/pokemon/types.json'
+    with open(types_path) as f:
+            available_types = json.loads(f.read())
 
-    # check if cache file exists
-    if exists:
-        with open(filename) as f:
-            response = json.loads(f.read())
-        print('#FOUND CACHE')
-        return render_template('types.html',type = type, response = response, pjson = json.dumps(response, indent=4, sort_keys=True), found=True)
-    # if no cache file found refetch
+    print(available_types['types'])
+    # check pokemon is in the list of known pokemon
+    for index, item in enumerate(available_types['types']):
+        if item['name'] == type:
+            # types start from 1 rather than 0 so use this to offset to find correct json file
+            typeid = index + 1
+            filename = 'static/cache/types/%s.json' % typeid
+            exists = os.path.isfile(filename)
+
+            # check if cache file exists
+            if exists:
+                with open(filename) as f:
+                    response = json.loads(f.read())
+                print('#FOUND CACHE')
+                return render_template('types.html',type = type, response = response, pjson = json.dumps(response, indent=4, sort_keys=True), found=True)
+            # if no cache file found refetch
+            else:   
+                return render_template('types.html',found=True,type=type)
     else:
-          
-        return render_template('types.html', type = type)
+        # return not found template with suggestions
+        return render_template('types.html',found=None,type=type)
 
 if __name__ == "__main__":
     app.run(debug=True)

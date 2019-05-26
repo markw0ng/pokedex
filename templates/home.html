@@ -7,9 +7,13 @@
   <body>
     {% extends "main.html" %}
     {% block content %}
-
-    <h1> My First Try Using Flask </h1>
-    <p> Flask is Fun </p>
+    <div class="pokeDexScreen"> 
+    <p>Hey Trainer, what pokemon are you looking for?</p>
+    <form class="form-inline my-2 my-lg-0" action="/search" method="POST">
+      <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search Pokemon" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form> 
+    </div>
     
     {% endblock %}
   </body>

@@ -10,39 +10,63 @@
 
     <div class="container">
 
- 
+    <div class="pokeDexScreen"> 
     {% if found %}
 
         {%if pokemon %}
-        <h1>{{pokemon}}</h1>
-        <p>Hey you selected {{pokemon}}</p>
+            <div id="pokeMonSlider" class="carousel slide pokeScreen scanlines" data-ride="carousel">
 
+              <!-- Indicators -->
+              <ul class="carousel-indicators">
+                <li data-target="#pokeMonSlider" data-slide-to="0" class="active"></li>
+                <li data-target="#pokeMonSlider" data-slide-to="1"></li>
+              </ul>
+              
+              <!-- The slideshow -->
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img src="{{response.sprites.front_default}}" width="100%" />
+                </div>
+                <div class="carousel-item">
+                  <img src="{{response.sprites.back_default}}" width="100%" />
+                </div>
+              </div>
+              
+              <!-- Left and right controls -->
+              <a class="carousel-control-prev" href="#pokeMonSlider" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </a>
+              <a class="carousel-control-next" href="#pokeMonSlider" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </a>
+            </div>
+
+            <div class="row">
+                    <dt class="col-sm-3">Name</dt>
+                    <dd class="col-sm-9">{{response.name}}</dd>
+                    <dt class="col-sm-3">Order</dt>
+                    <dd class="col-sm-9">{{response.order}}</dd>
+                    <dt class="col-sm-3">Weight</dt>
+                    <dd class="col-sm-9">{{response.weight}}</dd>
+                    <dt class="col-sm-3">Type</dt>
+                    <dd class="col-sm-9">
+                    {% for item in response.types %}
+                        <a href="{{ url_for('pokemon_types',type=item.type.name) }}">{{item.type.name}}</a>
+                    {% endfor %}
+                    </dd>
+                    <dt class="col-sm-3">Abilities</dt>
+                    <dd class="col-sm-9">
+                    {% for item in response.abilities %}
+                        <span class="badge badge-primary">{{item.ability.name}}</span>
+                    {% endfor %}
+                    </dd>
+            </div>
         <div class="row">
-                <dt class="col-sm-3">Name</dt>
-                <dd class="col-sm-9">{{response.name}}</dd>
-                <dt class="col-sm-3">Order</dt>
-                <dd class="col-sm-9">{{response.order}}</dd>
-                <dt class="col-sm-3">Weight</dt>
-                <dd class="col-sm-9">{{response.weight}}</dd>
-                <dt class="col-sm-3">Type</dt>
-                <dd class="col-sm-9">
-                {% for item in response.types %}
-                    <a href="{{ url_for('pokemon_types',type=item.type.name) }}">{{item.type.name}}</a>
-                {% endfor %}
-                </dd>
-                <dt class="col-sm-3">Abilities</dt>
-                <dd class="col-sm-9">
-                {% for item in response.abilities %}
-                    <span class="badge badge-primary">{{item.ability.name}}</span>
-                {% endfor %}
-                </dd>
-        </div>
-        <div class="row">
-            <img src="{{response.sprites.front_default}}" />
-            <img src="{{response.sprites.back_default}}" />
+            
+ 
         </div>
             {% if pjson %}
-            <pre>{{ pjson }}</pre>
+            <pre style="display: none;">{{ pjson }}</pre>
             {% endif %}
         {% else %}
         <h1> Pokemon </h1>
@@ -50,9 +74,17 @@
         {% endif %}
 
     {% else %}
+        {%if pokemon %}
         <p>Sorry couldnt find a pokemon called "{{pokemon}}"</p>
+        {% else %}
+        <p>Hey Trainer, what pokemon are you looking for?</p>
+        <form class="form-inline my-2 my-lg-0" action="/search" method="POST">
+          <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search Pokemon" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form> 
+        {% endif %}
     {% endif %}
-
+    </div>
     </div>
     
     {% endblock %}
