@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Search results for a Pokemon.</title>
+  </head>
+  <body>
+    {% extends "main.html" %}
+    {% block content %}
+
+    <div class="container">
+
+        <h1> Search</h1>
+        <p> Hey Trainer which pokemon are you looking for today?</p>
+        <form class="form-inline my-2 my-lg-0" action="/search" method="POST">
+            <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search Pokemon" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>    
+
+    </div>
+    
+    {% endblock %}
+  </body>
+</html>

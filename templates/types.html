@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Type.</title>
+  </head>
+  <body>
+    {% extends "main.html" %}
+    {% block content %}
+
+    <div class="container">
+
+        <h1>Pokemon Type : {{ response.name }}</h1> 
+        <div class="row">
+            <dt class="col-sm-3">Weaknesses:</dt>
+            <dd class="col-sm-9">
+            {% for item in response.damage_relations.double_damage_from %}
+                <span class="badge badge-primary">{{item.name}}</span>
+            {% endfor %}
+            </dd> 
+            <dt class="col-sm-3">Advantages against:</dt>
+            <dd class="col-sm-9">
+            {% for item in response.damage_relations.double_damage_to %}
+                <span class="badge badge-primary">{{item.name}}</span>
+            {% endfor %}
+            </dd> 
+            <dt class="col-sm-3">Reduced damage from:</dt>
+            <dd class="col-sm-9">
+            {% for item in response.damage_relations.half_damage_from %}
+                <span class="badge badge-primary">{{item.name}}</span>
+            {% endfor %}
+            </dd> 
+            <dt class="col-sm-3">Reduced damage to:</dt>
+            <dd class="col-sm-9">
+            {% for item in response.damage_relations.half_damage_to %}
+                <span class="badge badge-primary">{{item.name}}</span>
+            {% endfor %}
+            </dd> 
+            <dt class="col-sm-3">No damage to:</dt>
+            <dd class="col-sm-9">
+            {% for item in response.damage_relations.no_damage_to %}
+                {{item.name}}
+            {% endfor %}
+            </dd> 
+            <dt class="col-sm-3">No damage from:</dt>
+            <dd class="col-sm-9">
+            {% for item in response.damage_relations.no_damage_from %}
+                {{item.name}}
+            {% endfor %}
+            </dd> 
+            <dt class="col-sm-3">No damage to:</dt>
+            <dd class="col-sm-9">
+            {% for item in response.damage_relations.no_damage_to %}
+                {{item.name}}
+            {% endfor %}
+            </dd> 
+        </div> 
+        <pre><code>{{pjson}}</code></pre>
+
+    </div>
+    
+    {% endblock %}
+  </body>
+</html>

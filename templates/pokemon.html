@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Pokemon</title>
+  </head>
+  <body>
+    {% extends "main.html" %}
+    {% block content %}
+
+    <div class="container">
+
+ 
+    {% if found %}
+
+        {%if pokemon %}
+        <h1>{{pokemon}}</h1>
+        <p>Hey you selected {{pokemon}}</p>
+
+        <div class="row">
+                <dt class="col-sm-3">Name</dt>
+                <dd class="col-sm-9">{{response.name}}</dd>
+                <dt class="col-sm-3">Order</dt>
+                <dd class="col-sm-9">{{response.order}}</dd>
+                <dt class="col-sm-3">Weight</dt>
+                <dd class="col-sm-9">{{response.weight}}</dd>
+                <dt class="col-sm-3">Type</dt>
+                <dd class="col-sm-9">
+                {% for item in response.types %}
+                    <a href="{{ url_for('pokemon_types',type=item.type.name) }}">{{item.type.name}}</a>
+                {% endfor %}
+                </dd>
+                <dt class="col-sm-3">Abilities</dt>
+                <dd class="col-sm-9">
+                {% for item in response.abilities %}
+                    <span class="badge badge-primary">{{item.ability.name}}</span>
+                {% endfor %}
+                </dd>
+        </div>
+        <div class="row">
+            <img src="{{response.sprites.front_default}}" />
+            <img src="{{response.sprites.back_default}}" />
+        </div>
+            {% if pjson %}
+            <pre>{{ pjson }}</pre>
+            {% endif %}
+        {% else %}
+        <h1> Pokemon </h1>
+        <p> Hey Trainer which pokemon are you looking for today?</p>
+        {% endif %}
+
+    {% else %}
+        <p>Sorry couldnt find a pokemon called "{{pokemon}}"</p>
+    {% endif %}
+
+    </div>
+    
+    {% endblock %}
+  </body>
+</html>
