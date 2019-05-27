@@ -2,7 +2,10 @@ from flask import Flask, render_template, request, redirect, url_for
 import requests
 import json
 import os
+import requests_cache
+import time
 app = Flask(__name__)
+requests_cache.install_cache('pokeapi_cache', backend='sqlite', expire_after=18000)
 
 @app.route("/")
 def home():
@@ -15,6 +18,7 @@ def pokemon():
 @app.route("/pokemon/<pokemon>")
 def find_pokemon(pokemon):
 
+    now = time.ctime(int(time.time()))
     #check pokemon exists from json file
     pokemonlist = 'static/pokemon/pokemon.json'
     with open(pokemonlist) as f:
@@ -25,34 +29,38 @@ def find_pokemon(pokemon):
         # set id of the pokemon found
         pokeid = pokemonlist['pokemon'].index(pokemon);
     else:
-        # return not found template with suggestions
+        # return not found template with suggestions @TODO
         return render_template('pokemon.html',found=None,pokemon=pokemon)
 
-    # setup cache file
-    filename = 'static/cache/pokemon/%s.json' % pokemon.lower()
-    exists = os.path.isfile(filename)
-
-    # check if cache file exists
-    if exists:
-        with open(filename) as f:
-            response = json.loads(f.read())
-        print('#FOUND CACHE')
-        return render_template('pokemon.html',pokemon = pokemon, response = response, pjson = json.dumps(response, indent=4, sort_keys=True), found=True)        
-    # if no cache file found refetch
+    r = requests.get('https://pokeapi.co/api/v2/pokemon/%s/' % pokemon)
+    print("Time: {0} / Used Cache: {1}".format(now, r.from_cache))
+    # pokemon not found return not found template
+    if(r.status_code == 404):
+        print('#NOT FOUND')
+        return render_template('pokemon.html',found=None,pokemon=pokemon)
+    # write to cache for next time
     else:
-        r = requests.get('https://pokeapi.co/api/v2/pokemon/%s/' % pokemon)
-        # pokemon not found return not found template
-        if(r.status_code == 404):
-            print('#NOT FOUND')
-            return render_template('pokemon.html',found=None,pokemon=pokemon)
-        # write to cache for next time
+        response = r.json()
+        species = requests.get(response['species']['url'])
+        print("Time: {0} / Used Cache: {1}".format(now, species.from_cache))
+        response['species']['meta'] = species.json()
+
+        for item in response['species']['meta']['flavor_text_entries']:
+            if item['language']['name'] == 'en':
+                response['species']['meta']['species_description'] = item['flavor_text']
+
+        evochain = requests.get(response['species']['meta']['evolution_chain']['url'])
+        response['species']['meta']['evolution_chain']['meta'] = evochain.json()
+
+
+        if 'species' in response['species']['meta']['evolution_chain']['meta']['chain'].keys():
+            print("found chain")
+            response['species']['meta']['evolution_chain']['evolves_from_name'] = response['species']['meta']['evolution_chain']['meta']['chain']['species']['name']
         else:
-            f = open(filename, "w")
-            f.write(r.text)
-            f.close()
-            print('#FOUND FROM API')
-            response = r.json()
-            return render_template('pokemon.html',pokemon = pokemon, response = response, found=True)
+            print("not found chain")
+
+
+        return render_template('pokemon.html',pokemon = pokemon, pjson = json.dumps(response, indent=4, sort_keys=True), response = response, found=True)
 
 # search pokemon
 @app.route("/search", methods = ['POST','GET'])
@@ -66,31 +74,18 @@ def search():
 # search pokemon types
 @app.route("/types/<type>")
 def pokemon_types(type):
-    types_path = 'static/pokemon/types.json'
-    with open(types_path) as f:
-            available_types = json.loads(f.read())
-
-    print(available_types['types'])
+    now = time.ctime(int(time.time()))
     # check pokemon is in the list of known pokemon
-    for index, item in enumerate(available_types['types']):
-        if item['name'] == type:
-            # types start from 1 rather than 0 so use this to offset to find correct json file
-            typeid = index + 1
-            filename = 'static/cache/types/%s.json' % typeid
-            exists = os.path.isfile(filename)
-
-            # check if cache file exists
-            if exists:
-                with open(filename) as f:
-                    response = json.loads(f.read())
-                print('#FOUND CACHE')
-                return render_template('types.html',type = type, response = response, pjson = json.dumps(response, indent=4, sort_keys=True), found=True)
-            # if no cache file found refetch
-            else:   
-                return render_template('types.html',found=True,type=type)
+    r = requests.get('https://pokeapi.co/api/v2/type/%s/' % type)
+    print("Time: {0} / Used Cache: {1}".format(now, r.from_cache))
+    # pokemon not found return not found template
+    if(r.status_code == 404):
+        print('#NOT FOUND')
+        return render_template('types.html',found=True,type=type)
+    # write to cache for next time
     else:
-        # return not found template with suggestions
-        return render_template('types.html',found=None,type=type)
+        response = r.json()
+        return render_template('types.html',type = type, response = response, pjson = json.dumps(response, indent=4, sort_keys=True), found=True)
 
 if __name__ == "__main__":
     app.run(debug=True)
