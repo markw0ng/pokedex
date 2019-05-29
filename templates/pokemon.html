@@ -74,13 +74,39 @@
 
           <div class="col">
 
+              <p><strong>Evolution Path</strong></p>
+
+              {% if response.species.meta.evolution_chain.meta.chain.species.name %}
+
+                <ul class="list-group">
+                <li class="list-group-item list-group-item-action {% if response.species.meta.evolution_chain.meta.chain.species.name == response.name  %} list-group-item-success {% endif %}"><a href="{{ url_for('find_pokemon',pokemon=response.species.meta.evolution_chain.meta.chain.species.name) }}">{{ response.species.meta.evolution_chain.meta.chain.species.name.capitalize() }}</a>
+              {% endif %}
+              {% if response.species.meta.evolution_chain.meta.chain.evolves_to %}
+                  <ul class="list-group b">
+                  {% for item in response.species.meta.evolution_chain.meta.chain.evolves_to %}
+                    <li class="list-group-item list-group-item-action {% if item.species.name == response.name  %} list-group-item-success {% endif %}"><a href="{{ url_for('find_pokemon',pokemon=item.species.name) }}">{{ item.species.name.capitalize() }}</a>
+                    {% for path in item.evolves_to %}
+                      <ul class="list-group">
+                        <li class="list-group-item list-group-item-action {% if path.species.name == response.name  %} list-group-item-success {% endif %}"><a href="{{ url_for('find_pokemon',pokemon=path.species.name) }}">{{ path.species.name.capitalize() }}</a></li>
+                      </ul>
+                    {% endfor %}
+                    </li>
+                  {% endfor %}
+                  </ul>
+                </li>
+
+                {% if response.species.meta.evolution_chain.meta.chain.species.name %}
+                </li>
+                {% endif %}
+
+                </ul>
+                
+              {% endif %}          
+
           </div>
 
         </div>
 
-            {% if pjson %}
-            <pre style="display: none;">{{ pjson }}</pre>
-            {% endif %}
         {% else %}
         <h1> Pokemon </h1>
         <p> Hey Trainer which pokemon are you looking for today?</p>
@@ -99,6 +125,10 @@
     {% endif %}
     </div>
     </div>
+
+    {% if pjson %}
+    <pre style="display: none;">{{ pjson }}</pre>
+    {% endif %}    
     
     {% endblock %}
   </body>
