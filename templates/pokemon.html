@@ -16,6 +16,8 @@
         {%if pokemon %}
             <div id="pokeMonSlider" class="carousel slide pokeScreen scanlines" data-ride="carousel">
 
+              <h1 class="pokemon-name pokefont text-center">{{ response.name.capitalize() }}</h1>              
+
               <!-- Indicators -->
               <ul class="carousel-indicators">
                 <li data-target="#pokeMonSlider" data-slide-to="0" class="active"></li>

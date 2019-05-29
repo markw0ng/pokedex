@@ -2,6 +2,10 @@ body{
     background: #000;
 }
 
+.pokefont {
+  font-family: 'pokemon_gbregular', Arial, Helvetica, sans-serif;
+}
+
 .pokeDex{
     max-width: 600px;
     margin: 30px auto;
@@ -23,6 +27,17 @@ body{
     margin-bottom: 20px;
 }
 
+
+.pokemon-name {
+  font-size: 1em;
+  color: #fff;
+  padding-top: 2em;
+}.pokemon-type {
+  font-size: 1.4em;
+  color: #000;
+  text-align: center;
+  margin-bottom: 1em;
+}
 
 
 .scanlines {

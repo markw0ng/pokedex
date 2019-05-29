@@ -20,17 +20,6 @@ def find_pokemon(pokemon):
 
     now = time.ctime(int(time.time()))
     #check pokemon exists from json file
-    pokemonlist = 'static/pokemon/pokemon.json'
-    with open(pokemonlist) as f:
-        pokemonlist = json.loads(f.read())
-
-    # check pokemon is in the list of known pokemon
-    if pokemon in pokemonlist['pokemon']:
-        # set id of the pokemon found
-        pokeid = pokemonlist['pokemon'].index(pokemon);
-    else:
-        # return not found template with suggestions @TODO
-        return render_template('pokemon.html',found=None,pokemon=pokemon)
 
     r = requests.get('https://pokeapi.co/api/v2/pokemon/%s/' % pokemon)
     print("Time: {0} / Used Cache: {1}".format(now, r.from_cache))

@@ -12,30 +12,30 @@
         <div class="pokeDexScreen"> 
 
         {% if response %}
-        <h1>Pokemon Type : {{ response.name }}</h1> 
+        <h1 class="pokemon-type pokefont">{{ response.name.capitalize() }}</h1> 
         <div class="row">
             <dt class="col-sm-3">Weaknesses:</dt>
             <dd class="col-sm-9">
             {% for item in response.damage_relations.double_damage_from %}
-                <span class="badge badge-primary">{{item.name}}</span>
+            <a href="{{ url_for('pokemon_types',type=item.name) }}"><span class="badge badge-primary">{{item.name}}</span></a>
             {% endfor %}
             </dd> 
             <dt class="col-sm-3">Advantages against:</dt>
             <dd class="col-sm-9">
             {% for item in response.damage_relations.double_damage_to %}
-                <span class="badge badge-primary">{{item.name}}</span>
+            <a href="{{ url_for('pokemon_types',type=item.name) }}"><span class="badge badge-primary">{{item.name}}</span></a>
             {% endfor %}
             </dd> 
             <dt class="col-sm-3">Reduced damage from:</dt>
             <dd class="col-sm-9">
             {% for item in response.damage_relations.half_damage_from %}
-                <span class="badge badge-primary">{{item.name}}</span>
+            <a href="{{ url_for('pokemon_types',type=item.name) }}"><span class="badge badge-primary">{{item.name}}</span></a>
             {% endfor %}
             </dd> 
             <dt class="col-sm-3">Reduced damage to:</dt>
             <dd class="col-sm-9">
             {% for item in response.damage_relations.half_damage_to %}
-                <span class="badge badge-primary">{{item.name}}</span>
+            <a href="{{ url_for('pokemon_types',type=item.name) }}"><span class="badge badge-primary">{{item.name}}</span></a>
             {% endfor %}
             </dd> 
             <dt class="col-sm-3">No damage to:</dt>
@@ -57,7 +57,26 @@
             {% endfor %}
             </dd> 
         </div> 
-        <!--<pre><code>{{pjson}}</code></pre>-->
+
+        <hr>
+
+        <div class="row">
+
+            <div class="col">
+
+                <h2 class="pokemon-type pokefont">{{ response.name.capitalize() }} Pokemon</h2>
+
+                <ul class="list-inline">
+                        {% for item in response.pokemon %}
+                            <li class="list-inline-item"><a href="{{ url_for('find_pokemon',pokemon=item.pokemon.name) }}">{{item.pokemon.name}}</a></li>
+                        {% endfor %}
+                </ul>
+
+            </div>
+
+        </div>
+
+        <pre style="display: none;"><code>{{pjson}}</code></pre>
         {% else %}
         <p>Invalid Type : {{ type }}</p>
         {% endif %}
